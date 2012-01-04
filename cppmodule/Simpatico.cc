@@ -14,28 +14,16 @@ using namespace boost::python;
 Simpatico::Simpatico(boost::shared_ptr<SystemDefinition> sysdef, boost::python::object callback)
     : Analyzer(sysdef), m_simulation(0),m_callback(callback) 
     {
-//   ParticleDataArrays arrays = m_pdata->acquireReadWrite();
- //   std::cout << arrays.nparticles << std::endl;
-    std::cout << m_pdata->getN() << std::endl;
-    const BoxDim& box = m_pdata->getBox();
-    std::cout <<& m_pdata->getBox() << " " << m_pdata << std::endl;
-   
-    std::cout <<  box.xhi << " " <<  box.xlo  << " " << box.yhi << std::endl;
- 
-  //  m_pdata->release();
     }
 
 Simpatico::~Simpatico()
     {
-
     if (m_simulation)
         delete m_simulation;
-
     }
 
 void Simpatico::resetStats()
     {
-
     if (m_simulation)
         delete m_simulation;
     m_simulation = new DiagnosticSimulation();
@@ -66,26 +54,23 @@ void Simpatico::resetStats()
         }
 
     m_simulation->init();
-
     }
 
 void Simpatico::analyze(unsigned int timestep)
     {
-
     // retrieve box information
     const BoxDim& box = m_pdata->getBox();
-    std::cout << box.xhi << " " <<  box.xlo  << box.yhi << std::endl;
+
     Util::Vector lengths(box.xhi-box.xlo,box.yhi-box.ylo,box.zhi-box.zlo);
-    McMd::MdSystem system = m_simulation->system();
-    system.boundary().setLengths(lengths);
-    std::cout << lengths;
+    McMd::MdSystem *system_ptr = &m_simulation->system();
+    system_ptr->boundary().setLengths(lengths);
 
     ParticleDataArraysConst arraysConst = m_pdata->acquireReadOnly();
     McMd::System::MoleculeIterator molIter;
     McMd::Molecule::AtomIterator atomIter;
     for (int iSpec = 0; iSpec < m_simulation->nSpecies(); ++iSpec)
         {
-        system.begin(iSpec, molIter);
+        system_ptr->begin(iSpec, molIter);
         for ( ; !molIter.atEnd(); ++molIter)
             {
             for (molIter->begin(atomIter); !atomIter.atEnd(); ++atomIter)
@@ -99,17 +84,14 @@ void Simpatico::analyze(unsigned int timestep)
         } 
     m_pdata->release();
 
-    system.pairPotential().buildPairList();
+    system_ptr->pairPotential().buildPairList();
 
     m_simulation->sample(timestep);
-
     }
 
 void Simpatico::printStats()
     {
-
     m_simulation->output();
-
     }
 
 void export_Simpatico()

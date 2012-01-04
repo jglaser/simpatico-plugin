@@ -1,3 +1,5 @@
+import _simpatico
+
 from hoomd_script import globals
 from hoomd_script import pair
 from hoomd_script import bond
@@ -5,7 +7,7 @@ from hoomd_script import analyze
 from hoomd_script import util
 from hoomd_script import data
 
-import _simpatico
+import hoomd
 
 class diagnostic(analyze._analyzer):
     ## \brief Launches and initializes Simpatico
@@ -200,7 +202,7 @@ class diagnostic(analyze._analyzer):
         # adjust neighbors_per_atom if necessary
         neighbors_per_atom = 20
         parameters += "    pairCapacity " + str(len(self.system.particles)*neighbors_per_atom) + "\n"
-        parameters += "    skin  1.0\n " # any value > 0 
+        parameters += "    skin  .001\n " # any value > 0 
         parameters += "   }\n"
         parameters += "  }\n"
         parameters += "  BondPotential{\n"

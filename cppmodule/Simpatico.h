@@ -1,4 +1,5 @@
-#include <hoomd/Analyzer.h>
+#include <hoomd/hoomd.h>
+
 
 #include <mcMd/mdSimulation/MdSimulation.h>
 #include <mcMd/diagnostics/DiagnosticManager.h>
