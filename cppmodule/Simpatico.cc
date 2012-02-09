@@ -65,7 +65,9 @@ void Simpatico::analyze(unsigned int timestep)
     McMd::MdSystem *system_ptr = &m_simulation->system();
     system_ptr->boundary().setLengths(lengths);
 
-    ParticleDataArraysConst arraysConst = m_pdata->acquireReadOnly();
+    ArrayHandle<Scalar4> h_pos(m_pdata->getPositions(), access_location::host, access_mode::read);
+    ArrayHandle<unsigned int> h_rtag(m_pdata->getGlobalRTags(), access_location::host, access_mode::read);
+
     McMd::System::MoleculeIterator molIter;
     McMd::Molecule::AtomIterator atomIter;
     for (int iSpec = 0; iSpec < m_simulation->nSpecies(); ++iSpec)
@@ -75,14 +77,13 @@ void Simpatico::analyze(unsigned int timestep)
             {
             for (molIter->begin(atomIter); !atomIter.atEnd(); ++atomIter)
                 {
-                unsigned int idx = arraysConst.rtag[atomIter->id()];
-                atomIter->position() = Util::Vector(arraysConst.x[idx]+lengths[0]/2.,
-                                              arraysConst.y[idx]+lengths[1]/2.,
-                                              arraysConst.z[idx]+lengths[2]/2.);
+                unsigned int idx = h_rtag.data[atomIter->id()];
+                atomIter->position() = Util::Vector(h_pos.data[idx].x+lengths[0]/2.,
+                                              h_pos.data[idx].y+lengths[1]/2.,
+                                              h_pos.data[idx].z+lengths[2]/2.);
                 }
             }
         } 
-    m_pdata->release();
 
     system_ptr->pairPotential().buildPairList();
 

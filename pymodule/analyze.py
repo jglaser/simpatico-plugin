@@ -9,6 +9,8 @@ from hoomd_script import data
 
 import hoomd
 
+import sys
+
 class diagnostic(analyze._analyzer):
     ## \brief Launches and initializes Simpatico
     #
@@ -98,7 +100,7 @@ class diagnostic(analyze._analyzer):
         parameters += " FileMaster{\n"
         parameters += "  commandFileName paramfile\n"
         parameters += "  inputPrefix ./\n"
-        parameters += "  outputPrefix " + self.out_dir + "\n"
+        parameters += "  outputPrefix " + str(self.out_dir) + "/\n"
         parameters += " }\n"
         parameters += " nAtomType "+ str(len(self.system.particles.types)) + "\n"
         parameters += " nBondType "+ str(self.system.bonds.bdata.getNBondTypes()) + "\n"
@@ -135,12 +137,12 @@ class diagnostic(analyze._analyzer):
         # count pair forces
         num_pair_force = 0;   
         for force in globals.forces:
-            if isinstance(force, pair.pair):
+            if force.enabled and isinstance(force, pair.pair):
                 num_pair_force+=1
                 pair_force = force;       
 
         if num_pair_force == 0 or num_pair_force > 1:
-            print >> sys.stderr, "\n***Error! Only one pair force is supported";
+            print >> sys.stderr, "\n***Error! Only one pair force is supported in Simpatico";
             raise RuntimeError('Error creating Simpatico parameter file');
 
         parameters += "  pairStyle"
@@ -200,7 +202,7 @@ class diagnostic(analyze._analyzer):
         parameters += "  PairList{\n"
         parameters += "    atomCapacity " + str(len(self.system.particles)) + "\n"
         # adjust neighbors_per_atom if necessary
-        neighbors_per_atom = 20
+        neighbors_per_atom = 50
         parameters += "    pairCapacity " + str(len(self.system.particles)*neighbors_per_atom) + "\n"
         parameters += "    skin  .001\n " # any value > 0 
         parameters += "   }\n"
