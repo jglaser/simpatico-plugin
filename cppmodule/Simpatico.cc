@@ -66,6 +66,7 @@ void Simpatico::analyze(unsigned int timestep)
     system_ptr->boundary().setLengths(lengths);
 
     ArrayHandle<Scalar4> h_pos(m_pdata->getPositions(), access_location::host, access_mode::read);
+    ArrayHandle<Scalar4> h_vel(m_pdata->getVelocities(), access_location::host, access_mode::read);
     ArrayHandle<unsigned int> h_rtag(m_pdata->getGlobalRTags(), access_location::host, access_mode::read);
 
     McMd::System::MoleculeIterator molIter;
@@ -81,6 +82,9 @@ void Simpatico::analyze(unsigned int timestep)
                 atomIter->position() = Util::Vector(h_pos.data[idx].x+lengths[0]/2.,
                                               h_pos.data[idx].y+lengths[1]/2.,
                                               h_pos.data[idx].z+lengths[2]/2.);
+                atomIter->velocity() = Util::Vector(h_vel.data[idx].x,
+                                                    h_vel.data[idx].y,
+                                                    h_vel.data[idx].z);
                 }
             }
         } 
