@@ -163,6 +163,18 @@ class diagnostic(analyze._analyzer):
                 for typej in self.system.particles.types:
                     pair_parameters += " " + str(pair_force.pair_coeff.get(typei,typej,'r_cut'))
             pair_parameters += "\n"
+        if (isinstance(pair_force, pair.dpd_conservative)):
+            parameters += " DpdPair\n"
+            pair_parameters = "   epsilon"
+            for typei in self.system.particles.types:
+                for typej in self.system.particles.types:
+                    pair_parameters += " " + str(pair_force.pair_coeff.get(typei,typej,'A'))
+            pair_parameters += "\n"
+            pair_parameters += "   sigma"
+            for typei in self.system.particles.types:
+                for typej in self.system.particles.types:
+                    pair_parameters += " " + str(pair_force.pair_coeff.get(typei,typej,'r_cut'))
+            pair_parameters += "\n"
         else:
             print >> sys.stderr, "\n***Error! Unsupported pair potential";
             raise RuntimeError('Error creating Simpatico parameter file');
