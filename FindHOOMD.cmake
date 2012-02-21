@@ -135,6 +135,8 @@ include (HOOMDCFlagsSetup)
 include (HOOMDOSSpecificSetup)
 # setup common libraries used by all targets in this project
 include (HOOMDCommonLibsSetup)
+# setup MPI support
+include (HOOMDMPISetup)
 # setup macros
 include (HOOMDMacros)
 
