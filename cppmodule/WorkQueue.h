@@ -12,7 +12,9 @@ class WorkQueue
         //! Add work to the queue
         void push(Data const& data)
         {
+            boost::mutex::scoped_lock lock(m_mutex);
             m_queue.push(data);
+            lock.unlock();
             m_condition_variable.notify_one();
         }
 
