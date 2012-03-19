@@ -147,9 +147,6 @@ void Simpatico::analyze(unsigned int timestep)
     SnapshotParticleData snap(m_pdata->getNGlobal());
     m_pdata->takeSnapshot(snap);
 
-    if (m_prof)
-        m_prof->pop();
-
 #ifdef ENABLE_MPI
     if (m_comm)
         if (m_comm->getMPICommunicator()->rank() != 0)
