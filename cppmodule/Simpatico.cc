@@ -144,9 +144,6 @@ void Simpatico::analyze(unsigned int timestep)
     if (m_prof)
         m_prof->push("Simpatico");
 
-    if (m_prof)
-        m_prof->push("take snapshot");
-
     SnapshotParticleData snap(m_pdata->getNGlobal());
     m_pdata->takeSnapshot(snap);
 
@@ -159,14 +156,8 @@ void Simpatico::analyze(unsigned int timestep)
             return;
 #endif
 
-    if (m_prof)
-        m_prof->push("push work");
-
     // post a work item
     m_work_queue.push(SimpaticoWorkItem(timestep, snap, m_pdata->getGlobalBox()));
-
-    if (m_prof)
-        m_prof->pop();
 
     if (m_prof)
         m_prof->pop();
