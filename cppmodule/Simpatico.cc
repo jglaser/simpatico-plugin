@@ -118,7 +118,7 @@ void Simpatico::resetStats()
     {
 #ifdef ENABLE_MPI
     if (m_comm)
-        if (m_comm->getMPICommunicator()->rank() != 0)
+        if (m_comm->getMPICommunicator()->rank() != (int) m_comm->getRootRank())
             return;
 #endif
 
@@ -149,7 +149,7 @@ void Simpatico::analyze(unsigned int timestep)
 
 #ifdef ENABLE_MPI
     if (m_comm)
-        if (m_comm->getMPICommunicator()->rank() != 0)
+        if (m_comm->getMPICommunicator()->rank() != (int) m_comm->getRootRank())
             return;
 #endif
 
@@ -164,7 +164,7 @@ void Simpatico::printStats()
     {
 #ifdef ENABLE_MPI
     if (m_comm)
-        if (m_comm->getMPICommunicator()->rank() != 0)
+        if (m_comm->getMPICommunicator()->rank() != (int) m_comm->getRootRank())
             return;
 #endif
 
