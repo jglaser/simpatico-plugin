@@ -65,8 +65,11 @@ class Simpatico : public Analyzer
     public:
 
         //! Constructor
-        //! \param params simpatico parameter file 
-        Simpatico(boost::shared_ptr<SystemDefinition>, boost::python::object callback);
+        //! \param callback Callback that returns simpatico parameter file 
+        //! \param queue_limit Limit for worker queue (in bytes)
+        Simpatico(boost::shared_ptr<SystemDefinition>,
+                  boost::python::object callback,
+                  const unsigned int queue_limit = 0);
         virtual ~Simpatico();
 
         //! Use simpatico to perform analysis

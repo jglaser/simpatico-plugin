@@ -105,8 +105,11 @@ class SimpaticoWorkerThread
     };
 
 
-Simpatico::Simpatico(boost::shared_ptr<SystemDefinition> sysdef, boost::python::object callback)
-    : Analyzer(sysdef),m_callback(callback) 
+Simpatico::Simpatico(boost::shared_ptr<SystemDefinition> sysdef,
+                     boost::python::object callback,
+                     const unsigned int queue_limit)
+    : Analyzer(sysdef),m_callback(callback),
+      m_work_queue(queue_limit/sizeof(SimpaticoWorkItem))
     {
     }
 
@@ -118,7 +121,7 @@ void Simpatico::resetStats()
     {
 #ifdef ENABLE_MPI
     if (m_comm)
-        if (m_comm->getMPICommunicator()->rank() != (int) m_comm->getRootRank())
+        if (! m_comm->isRoot())
             return;
 #endif
 
@@ -130,10 +133,11 @@ void Simpatico::resetStats()
         {
         params = extracted_rv();
         }
-    else {
+    else
+        {
         cerr << "***Error! Parameter file generation failed." << endl;
         throw runtime_error("Cannot initialize simpatico.");
-         }
+        }
 
     // create one worker thread
     m_worker_thread = boost::thread(SimpaticoWorkerThread(), boost::ref(m_work_queue), params);
@@ -149,7 +153,7 @@ void Simpatico::analyze(unsigned int timestep)
 
 #ifdef ENABLE_MPI
     if (m_comm)
-        if (m_comm->getMPICommunicator()->rank() != (int) m_comm->getRootRank())
+        if (! m_comm->isRoot())
             return;
 #endif
 
@@ -164,7 +168,7 @@ void Simpatico::printStats()
     {
 #ifdef ENABLE_MPI
     if (m_comm)
-        if (m_comm->getMPICommunicator()->rank() != (int) m_comm->getRootRank())
+        if (! m_comm->isRoot())
             return;
 #endif
 
@@ -177,5 +181,5 @@ void Simpatico::printStats()
 void export_Simpatico()
     {
     class_< Simpatico, boost::shared_ptr<Simpatico>, bases<Analyzer>, boost::noncopyable>
-    ("Simpatico", init< boost::shared_ptr<SystemDefinition>, boost::python::object >());
+    ("Simpatico", init< boost::shared_ptr<SystemDefinition>, boost::python::object, unsigned int >());
     }

@@ -15,7 +15,7 @@ class diagnostic(analyze._analyzer):
     ## \brief Launches and initializes Simpatico
     #
     # \param diagnostic_params  parameter file section for diagnostics
-    def __init__(self, period, diagnostic_params=None, out_dir=None):
+    def __init__(self, period, diagnostic_params=None, out_dir=None, queue_limit=1024^3):
         util.print_status_line();
 
         # initalize base class
@@ -30,7 +30,7 @@ class diagnostic(analyze._analyzer):
         self.diagnostic_params = diagnostic_params;
 
         # create c++ mirror class
-        self.cpp_analyzer = _simpatico.Simpatico(globals.system_definition, self.generate_parameters);
+        self.cpp_analyzer = _simpatico.Simpatico(globals.system_definition, self.generate_parameters, queue_limit);
         self.setupAnalyzer(period);
 
     def find_distinct_species(self):

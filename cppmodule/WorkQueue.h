@@ -9,10 +9,21 @@ template<typename Data>
 class WorkQueue
 {
     public:
+        /*!\param limit Limit for queue size (0=no limit)
+         */
+        WorkQueue(unsigned int limit=0)
+            : m_limit(limit)
+            { }
+
         //! Add work to the queue
         void push(Data const& data)
         {
             boost::mutex::scoped_lock lock(m_mutex);
+            while (m_limit && m_queue.size() >= m_limit)
+                {
+                m_below_limit.wait(lock);
+                }
+
             m_queue.push(data);
             lock.unlock();
             m_condition_variable.notify_one();
@@ -34,6 +45,9 @@ class WorkQueue
             
             popped_value=m_queue.front();
             m_queue.pop();
+            if (m_limit && m_queue.size() < m_limit)
+                m_below_limit.notify_one();
+
             return true;
         }
 
@@ -41,16 +55,20 @@ class WorkQueue
         {
             boost::mutex::scoped_lock lock(m_mutex);
             while(m_queue.empty())
-            {
+                {
                 m_condition_variable.wait(lock);
-            }
+                }
             
             popped_value=m_queue.front();
             m_queue.pop();
+            if (m_limit && m_queue.size() < m_limit)
+                m_below_limit.notify_one();
         }
 
     private:
         std::queue<Data> m_queue;
         mutable boost::mutex m_mutex;
         boost::condition_variable m_condition_variable;
+        boost::condition_variable m_below_limit;
+        unsigned int m_limit;
 };
