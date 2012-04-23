@@ -69,8 +69,9 @@ class SimpaticoWorkerThread
             unsigned int timestep = work_item.timestep;
             SnapshotParticleData& snap = work_item.snapshot;
             BoxDim &box = work_item.box;
-            
-            Util::Vector lengths(box.xhi-box.xlo,box.yhi-box.ylo,box.zhi-box.zlo);
+           
+            Scalar3 L = box.getL();
+            Util::Vector lengths(L.x, L.y, L.z);
             McMd::MdSystem *system_ptr = &simulation->system();
             system_ptr->boundary().setLengths(lengths);
 

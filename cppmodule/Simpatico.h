@@ -44,7 +44,7 @@ class DiagnosticSimulation : public McMd::MdSimulation
     // initialize diagnostics
     void init()
         {
-        diagnosticManager().initialize();
+        diagnosticManager().setup();
         }
 
     // sample one configuration
