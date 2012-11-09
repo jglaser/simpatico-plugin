@@ -8,7 +8,7 @@
 #include <boost/thread.hpp>
 #include <boost/python.hpp>
 
-#include "WorkQueue.h"
+#include <hoomd/WorkQueue.h>
 
 struct SimpaticoWorkItem
     {

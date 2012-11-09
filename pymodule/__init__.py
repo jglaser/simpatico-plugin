@@ -1,1 +1,1 @@
-import analyze
+import hoomd_plugins.simpatico.analyze

@@ -125,6 +125,8 @@ set(CMAKE_MODULE_PATH ${HOOMD_ROOT}/share/hoomd/CMake/cuda
                       ${CMAKE_MODULE_PATH}
                       )
 
+# Find the python executable and libraries
+include (HOOMDPythonSetup)
 # Find the boost libraries and set them up
 include (HOOMDBoostSetup)
 # Find CUDA and set it up
@@ -135,10 +137,10 @@ include (HOOMDCFlagsSetup)
 include (HOOMDOSSpecificSetup)
 # setup common libraries used by all targets in this project
 include (HOOMDCommonLibsSetup)
-# setup MPI support
-include (HOOMDMPISetup)
 # setup macros
 include (HOOMDMacros)
+# setup MPI support
+include (HOOMDMPISetup)
 
 set(HOOMD_LIBRARIES ${HOOMD_LIB} ${HOOMD_COMMON_LIBS})
 include_directories(${HOOMD_INCLUDE_DIR})

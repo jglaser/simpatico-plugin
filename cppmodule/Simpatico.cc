@@ -18,13 +18,13 @@ class SimpaticoWorkerThread
             simulation = new DiagnosticSimulation;
             init_simulation(params);
 
-            bool done = false;
             SimpaticoWorkItem work;
+            bool done = false;
             while (! done)
                 {
                 try
                     {
-                    queue.wait_and_pop(work);
+                    work = queue.wait_and_pop();
                     process_work_item(work);
                     }
                 catch(boost::thread_interrupted const)
@@ -73,7 +73,7 @@ class SimpaticoWorkerThread
             Scalar3 L = box.getL();
             Util::Vector lengths(L.x, L.y, L.z);
             McMd::MdSystem *system_ptr = &simulation->system();
-            system_ptr->boundary().setLengths(lengths);
+            system_ptr->boundary().setOrthorhombic(lengths);
 
             McMd::System::MoleculeIterator molIter;
             McMd::Molecule::AtomIterator atomIter;
@@ -81,9 +81,9 @@ class SimpaticoWorkerThread
             for (int iSpec = 0; iSpec < simulation->nSpecies(); ++iSpec)
                 {
                 system_ptr->begin(iSpec, molIter);
-                for ( ; !molIter.atEnd(); ++molIter)
+                for ( ; !molIter.isEnd(); ++molIter)
                     {
-                    for (molIter->begin(atomIter); !atomIter.atEnd(); ++atomIter)
+                    for (molIter->begin(atomIter); !atomIter.isEnd(); ++atomIter)
                         {
                         atomIter->position() = Util::Vector(snap.pos[tag].x+lengths[0]/2.,
                                                       snap.pos[tag].y+lengths[1]/2.,
@@ -121,8 +121,8 @@ Simpatico::~Simpatico()
 void Simpatico::resetStats()
     {
 #ifdef ENABLE_MPI
-    if (m_comm)
-        if (! m_comm->isRoot())
+    if (m_pdata->getDomainDecomposition())
+        if (! (m_exec_conf->getRank() == 0))
             return;
 #endif
 
@@ -153,8 +153,8 @@ void Simpatico::analyze(unsigned int timestep)
     m_pdata->takeSnapshot(snap);
 
 #ifdef ENABLE_MPI
-    if (m_comm)
-        if (! m_comm->isRoot())
+    if (m_pdata->getDomainDecomposition())
+        if (! (m_exec_conf->getRank() == 0))
             return;
 #endif
 
@@ -168,8 +168,8 @@ void Simpatico::analyze(unsigned int timestep)
 void Simpatico::printStats()
     {
 #ifdef ENABLE_MPI
-    if (m_comm)
-        if (! m_comm->isRoot())
+    if (m_pdata->getDomainDecomposition())
+        if (! (m_exec_conf->getRank() == 0))
             return;
 #endif
 

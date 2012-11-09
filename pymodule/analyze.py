@@ -1,4 +1,4 @@
-import _simpatico
+from hoomd_plugins.simpatico import _simpatico
 
 from hoomd_script import globals
 from hoomd_script import pair
@@ -15,7 +15,7 @@ class diagnostic(analyze._analyzer):
     ## \brief Launches and initializes Simpatico
     #
     # \param diagnostic_params  parameter file section for diagnostics
-    def __init__(self, period, diagnostic_params=None, out_dir=None, queue_limit=1024^3):
+    def __init__(self, period, diagnostic_params=None, out_dir=None, queue_limit=5*1024^3):
         util.print_status_line();
 
         # initalize base class
@@ -38,7 +38,7 @@ class diagnostic(analyze._analyzer):
         # bonds are connections between nodes
         nodes = []; 
         nparticles = len(self.system.particles)
-        for p in xrange(0,nparticles):
+        for p in range(0,nparticles):
             nodes.append([[], False])
 
         for bond in self.system.bonds:
@@ -109,10 +109,12 @@ class diagnostic(analyze._analyzer):
             parameters += " " +  cur_type + " 1.0"; # mass 1.0
         parameters += "\n"
         parameters += " maskedPairPolicy"
-        if (globals.neighbor_list.cpp_nlist.countExclusions() > 0):
-            parameters += " MaskBonded\n"
-        else:
-            parameters += " MaskNone\n"
+#FIXME
+        parameters += "  MaskNone\n"
+#        if (globals.neighbor_list.cpp_nlist.countExclusions() > 0):
+#             parameters += " MaskBonded\n"
+#        else:
+#            parameters += " MaskNone\n"
 
         parameters += " SpeciesManager{\n"
         for cur_species in self.species.keys():
@@ -207,7 +209,7 @@ class diagnostic(analyze._analyzer):
 
         nbondtypes = globals.system_definition.getBondData().getNBondTypes();
         bond_type_list = [];
-        for i in xrange(0,nbondtypes):
+        for i in range(0,nbondtypes):
             bond_type_list.append(globals.system_definition.getBondData().getNameByType(i));
 
         if isinstance(bond_force,bond.harmonic):
