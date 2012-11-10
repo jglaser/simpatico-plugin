@@ -10,6 +10,7 @@ from hoomd_script import data
 import hoomd
 
 import sys
+import weakref
 
 class diagnostic(analyze._analyzer):
     ## \brief Launches and initializes Simpatico
@@ -30,6 +31,8 @@ class diagnostic(analyze._analyzer):
         # create c++ mirror class
         self.cpp_analyzer = _simpatico.Simpatico(globals.system_definition, self.generate_parameters, queue_limit);
         self.setupAnalyzer(period);
+        #hack to prevent cylic reference
+        self.cpp_analyzer = None
 
     def find_distinct_species(self):
         # nodes correspond to particles
