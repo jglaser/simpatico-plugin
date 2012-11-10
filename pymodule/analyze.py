@@ -21,8 +21,6 @@ class diagnostic(analyze._analyzer):
         # initalize base class
         analyze._analyzer.__init__(self);
 
-        self.system = data.system_data(globals.system_definition)
-
         if out_dir == None:
            out_dir = "./";
         self.out_dir = out_dir;
@@ -37,11 +35,13 @@ class diagnostic(analyze._analyzer):
         # nodes correspond to particles
         # bonds are connections between nodes
         nodes = []; 
-        nparticles = len(self.system.particles)
+
+        system = data.system_data(globals.system_definition)
+        nparticles = len(system.particles)
         for p in range(0,nparticles):
             nodes.append([[], False])
 
-        for bond in self.system.bonds:
+        for bond in system.bonds:
             nodes[bond.a][0].append((bond.b, globals.system_definition.getBondData().getTypeByName(bond.type)));
             nodes[bond.b][0].append((bond.a, globals.system_definition.getBondData().getTypeByName(bond.type)));
 
@@ -61,6 +61,7 @@ class diagnostic(analyze._analyzer):
 
     ## \internal
     def recursivelyMark(self,nodeID, nodes, local_bonds=None, local_id=None, bond_type=None, local_types=None):
+        system = data.system_data(globals.system_definition)
         (connections, visited) = nodes[nodeID]
         if visited:
             return
@@ -84,7 +85,7 @@ class diagnostic(analyze._analyzer):
         # mark as visited 
         nodes[nodeID][1] = True
          
-        local_types.append(self.system.particles[nodeID].type)
+        local_types.append(system.particles[nodeID].type)
         
         for (next_connectedNodeID,next_bond_type) in connections:
             ret = self.recursivelyMark(next_connectedNodeID, nodes, local_bonds, local_id, next_bond_type, local_types)
@@ -96,16 +97,17 @@ class diagnostic(analyze._analyzer):
     ## \internal
     # \brief Generates the parameter file contents
     def generate_parameters(self):
+        system = data.system_data(globals.system_definition)
         parameters = "MdSimulation{\n"
         parameters += " FileMaster{\n"
         parameters += "  commandFileName paramfile\n"
         parameters += "  inputPrefix ./\n"
         parameters += "  outputPrefix " + str(self.out_dir) + "/\n"
         parameters += " }\n"
-        parameters += " nAtomType "+ str(len(self.system.particles.types)) + "\n"
-        parameters += " nBondType "+ str(self.system.bonds.bdata.getNBondTypes()) + "\n"
+        parameters += " nAtomType "+ str(len(system.particles.types)) + "\n"
+        parameters += " nBondType "+ str(system.bonds.bdata.getNBondTypes()) + "\n"
         parameters += " atomTypes "
-        for cur_type in self.system.particles.types: 
+        for cur_type in system.particles.types: 
             parameters += " " +  cur_type + " 1.0"; # mass 1.0
         parameters += "\n"
         parameters += " maskedPairPolicy"
@@ -124,7 +126,7 @@ class diagnostic(analyze._analyzer):
             parameters += "  nBond " + str(len(cur_species[0])) + "\n"
             parameters += "  atomTypeIds\n"
             for cur_type in cur_species[1]:
-                parameters += str(self.system.particles.types.index(cur_type)) + "\n"
+                parameters += str(system.particles.types.index(cur_type)) + "\n"
             parameters += "  speciesBonds\n"
             
             for cur_bond in cur_species[0]:
@@ -151,47 +153,47 @@ class diagnostic(analyze._analyzer):
         if (isinstance(pair_force, pair.lj)):
             parameters += " LJPair\n"
             pair_parameters = "   epsilon"
-            for typei in self.system.particles.types:
-                for typej in self.system.particles.types:
+            for typei in system.particles.types:
+                for typej in system.particles.types:
                     pair_parameters += " " + str(pair_force.pair_coeff.get(typei,typej,'epsilon'))
             pair_parameters += "\n"
             pair_parameters += "   sigma"
-            for typei in self.system.particles.types:
-                for typej in self.system.particles.types:
+            for typei in system.particles.types:
+                for typej in system.particles.types:
                     pair_parameters += " " + str(pair_force.pair_coeff.get(typei,typej,'sigma'))
             pair_parameters += "\n"
             pair_parameters += "   cutoff"
-            for typei in self.system.particles.types:
-                for typej in self.system.particles.types:
+            for typei in system.particles.types:
+                for typej in system.particles.types:
                     pair_parameters += " " + str(pair_force.pair_coeff.get(typei,typej,'r_cut'))
             pair_parameters += "\n"
         elif (isinstance(pair_force, pair.dpd_conservative)):
             parameters += " DpdPair\n"
             pair_parameters = "   epsilon"
-            for typei in self.system.particles.types:
-                for typej in self.system.particles.types:
+            for typei in system.particles.types:
+                for typej in system.particles.types:
                     pair_parameters += " " + str(pair_force.pair_coeff.get(typei,typej,'A'))
             pair_parameters += "\n"
             pair_parameters += "   sigma"
-            for typei in self.system.particles.types:
-                for typej in self.system.particles.types:
+            for typei in system.particles.types:
+                for typej in system.particles.types:
                     pair_parameters += " " + str(pair_force.pair_coeff.get(typei,typej,'r_cut'))
             pair_parameters += "\n"
         else:
             parameters += " LJPair\n"
             pair_parameters = "   epsilon"
-            for typei in self.system.particles.types:
-                for typej in self.system.particles.types:
+            for typei in system.particles.types:
+                for typej in system.particles.types:
                     pair_parameters += " 1.0"
             pair_parameters += "\n"
             pair_parameters += "   sigma"
-            for typei in self.system.particles.types:
-                for typej in self.system.particles.types:
+            for typei in system.particles.types:
+                for typej in system.particles.types:
                     pair_parameters += " 1.0"
             pair_parameters += "\n"
             pair_parameters += "   cutoff"
-            for typei in self.system.particles.types:
-                for typej in self.system.particles.types:
+            for typei in system.particles.types:
+                for typej in system.particles.types:
                     pair_parameters += " 1.0"
             pair_parameters += "\n"
  
@@ -228,12 +230,12 @@ class diagnostic(analyze._analyzer):
 
         parameters += "  MdPairPotential{\n"
         parameters += pair_parameters
-        parameters += "   maxBoundary orthorhombic " + str(self.system.box[0]) + " " + str(self.system.box[1]) + " " + str(self.system.box[2]) + "\n"
+        parameters += "   maxBoundary orthorhombic " + str(system.box[0]) + " " + str(system.box[1]) + " " + str(system.box[2]) + "\n"
         parameters += "  PairList{\n"
-        parameters += "    atomCapacity " + str(len(self.system.particles)) + "\n"
+        parameters += "    atomCapacity " + str(len(system.particles)) + "\n"
         # adjust neighbors_per_atom if necessary
         neighbors_per_atom = 50
-        parameters += "    pairCapacity " + str(len(self.system.particles)*neighbors_per_atom) + "\n"
+        parameters += "    pairCapacity " + str(len(system.particles)*neighbors_per_atom) + "\n"
         parameters += "    skin  .001\n " # any value > 0 
         parameters += "   }\n"
         parameters += "  }\n"
