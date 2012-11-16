@@ -43,10 +43,17 @@ class diagnostic(analyze._analyzer):
         nparticles = len(system.particles)
         for p in range(0,nparticles):
             nodes.append([[], False])
+        
+        bdata_snapshot = hoomd.SnapshotBondData(len(system.bonds))
 
-        for bond in system.bonds:
-            nodes[bond.a][0].append((bond.b, globals.system_definition.getBondData().getTypeByName(bond.type)));
-            nodes[bond.b][0].append((bond.a, globals.system_definition.getBondData().getTypeByName(bond.type)));
+        globals.system_definition.getBondData().takeSnapshot(bdata_snapshot)
+
+        for i in range(0,len(bdata_snapshot.bonds)):
+            bond = bdata_snapshot.bonds[i]
+            type = bdata_snapshot.type_id[i]
+
+            nodes[bond.x][0].append((bond.y, type));
+            nodes[bond.y][0].append((bond.x, type));
 
         # find distinct connected components
         species = {};
