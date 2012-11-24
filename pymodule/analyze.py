@@ -207,7 +207,7 @@ class diagnostic(analyze._analyzer):
                     pair_parameters += " 1.0"
             pair_parameters += "\n"
  
-            print >> sys.stderr, "\n***Warning! Unsupported pair potential. Substituting default values.";
+            globals.msg.warning("Unsupported pair potential. Substituting default values.\n")
 
         # map bond potential
         parameters += "  bondStyle"
