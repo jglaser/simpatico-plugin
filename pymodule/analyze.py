@@ -240,7 +240,8 @@ class diagnostic(analyze._analyzer):
 
         parameters += "  MdPairPotential{\n"
         parameters += pair_parameters
-        parameters += "   maxBoundary orthorhombic " + str(system.box[0]) + " " + str(system.box[1]) + " " + str(system.box[2]) + "\n"
+        # leave some room for fluctuations
+        parameters += "   maxBoundary orthorhombic " + str(2.0*system.box[0]) + " " + str(2.0*system.box[1]) + " " + str(2.0*system.box[2]) + "\n"
         parameters += "  PairList{\n"
         parameters += "    atomCapacity " + str(len(system.particles)) + "\n"
         # adjust neighbors_per_atom if necessary
