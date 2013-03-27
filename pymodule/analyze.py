@@ -121,12 +121,10 @@ class diagnostic(analyze._analyzer):
             parameters += " " +  cur_type + " 1.0"; # mass 1.0
         parameters += "\n"
         parameters += " maskedPairPolicy"
-#FIXME
-        parameters += "  MaskNone\n"
-#        if (globals.neighbor_list.cpp_nlist.countExclusions() > 0):
-#             parameters += " MaskBonded\n"
-#        else:
-#            parameters += " MaskNone\n"
+        if (globals.neighbor_list.cpp_nlist.getNumExclusions(2) > 0):
+            parameters += " MaskBonded\n"
+        else:
+            parameters += " MaskNone\n"
 
         parameters += " SpeciesManager{\n"
         for cur_species in self.species.keys():

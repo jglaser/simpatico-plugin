@@ -120,12 +120,6 @@ Simpatico::~Simpatico()
 
 void Simpatico::resetStats()
     {
-#ifdef ENABLE_MPI
-    if (m_pdata->getDomainDecomposition())
-        if (! (m_exec_conf->getRank() == 0))
-            return;
-#endif
-
     // Get parameter file contents from python callback
     boost::python::object rv = m_callback();
     boost::python::extract<std::string> extracted_rv(rv);
@@ -139,6 +133,12 @@ void Simpatico::resetStats()
         cerr << "***Error! Parameter file generation failed." << endl;
         throw runtime_error("Cannot initialize simpatico.");
         }
+
+#ifdef ENABLE_MPI
+    if (m_pdata->getDomainDecomposition())
+        if (! (m_exec_conf->getRank() == 0))
+            return;
+#endif
 
     // create one worker thread
     m_worker_thread = boost::thread(SimpaticoWorkerThread(), boost::ref(m_work_queue), params);
