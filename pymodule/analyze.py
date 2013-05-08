@@ -271,7 +271,7 @@ class diagnostic(analyze._analyzer):
         if self.diagnostic_params is not None:
              parameters += self.diagnostic_params
         parameters += " }\n"
-        parameters += " writeRestartInterval 0\n"
+        parameters += " saveInterval 0\n"
         parameters += "}\n"
 
         return parameters
