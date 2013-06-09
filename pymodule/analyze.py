@@ -139,7 +139,7 @@ class diagnostic(analyze._analyzer):
             
             for cur_bond in cur_species[0]:
                 parameters += str(cur_bond[0]) + " " + str(cur_bond[1]) + " " + str(cur_bond[2]) + "\n"
-        parameters += "  }\n"
+            parameters += "  }\n"
         parameters += " }\n"
         parameters += " Random{\n"
         parameters += "   seed 0\n"
