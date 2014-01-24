@@ -54,18 +54,18 @@ endif (SIMPATICO_SOURCE_DIR)
 set(_old_prefixes ${CMAKE_FIND_LIBRARY_PREFIXES})
 set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
 find_library(SIMPATICO_MAIN_LIB
-             NAMES mcMd 
-             HINTS ${SIMPATICO_ROOT}/lib
+             NAMES mcMd
+             HINTS ${SIMPATICO_ROOT}/obj/serial/mcMd
              )
 
 find_library(SIMPATICO_UTIL_LIB
              NAMES util
-             HINTS ${SIMPATICO_ROOT}/lib
+             HINTS ${SIMPATICO_ROOT}/obj/serial/util
              )
 
 find_library(SIMPATICO_INTER_LIB
             NAMES inter
-            HINTS ${SIMPATICO_ROOT}/lib
+            HINTS ${SIMPATICO_ROOT}/obj/serial/inter
             )
 
 set(CMAKE_FIND_LIBRARY_PREFIXES ${_old_prefixes})

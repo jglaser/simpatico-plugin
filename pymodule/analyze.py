@@ -266,7 +266,7 @@ class diagnostic(analyze._analyzer):
         parameters += " }\n"
 
         # append definition of diagnostic manager
-        parameters += " DiagnosticManager{\n"
+        parameters += " AnalyzerManager{\n"
         parameters += "  baseInterval 1\n"
         if self.diagnostic_params is not None:
              parameters += self.diagnostic_params

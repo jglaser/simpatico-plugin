@@ -15,7 +15,7 @@ class SimpaticoWorkerThread
         // The thread main routine
         void operator ()(WorkQueue<SimpaticoWorkItem>& queue, std::string params)
             {
-            simulation = new DiagnosticSimulation;
+            simulation = new AnalyzerSimulation;
             init_simulation(params);
 
             SimpaticoWorkItem work;
@@ -102,7 +102,7 @@ class SimpaticoWorkerThread
             }
 
         private:
-            DiagnosticSimulation *simulation;
+            AnalyzerSimulation *simulation;
     };
 
 

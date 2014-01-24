@@ -2,7 +2,7 @@
 
 
 #include <mcMd/mdSimulation/MdSimulation.h>
-#include <mcMd/diagnostics/DiagnosticManager.h>
+#include <mcMd/analyzers/AnalyzerManager.h>
 
 #include <stdio.h>
 #include <boost/thread.hpp>
@@ -31,32 +31,32 @@ struct SimpaticoWorkItem
     BoxDim box;
     };
 
-// simple wrapper around MdSimulation to access diagnosticManager functions
+// simple wrapper around MdSimulation to access analyzerManager functions
 
-class DiagnosticSimulation : public McMd::MdSimulation
+class AnalyzerSimulation : public McMd::MdSimulation
     {
     public:
-    DiagnosticSimulation()
+    AnalyzerSimulation()
         : McMd::MdSimulation()
         {
         }
 
-    // initialize diagnostics
+    // initialize analyzers
     void init()
         {
-        diagnosticManager().setup();
+        analyzerManager().setup();
         }
 
     // sample one configuration
     void sample(int iStep)
         {
-        diagnosticManager().sample(iStep);
+        analyzerManager().sample(iStep);
         }
 
     // output statistics
     void output()
         {
-        diagnosticManager().output();
+        analyzerManager().output();
         }
     };
 
