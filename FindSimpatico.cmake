@@ -14,6 +14,7 @@
 # see if we can find the SIMPATICO bin/ directory first. This usually works well if "mcSim" is in the path
 find_path(SIMPATICO_BIN_DIR
           NAMES mdSim
+          HINTS ${SIMPATIC_ROOT}/bin
           )
 
 set(_simpatico_root_guess "SIMPATICO_ROOT-NOTFOUND")
@@ -55,17 +56,17 @@ set(_old_prefixes ${CMAKE_FIND_LIBRARY_PREFIXES})
 set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
 find_library(SIMPATICO_MAIN_LIB
              NAMES mcMd
-             HINTS ${SIMPATICO_ROOT}/obj/serial/mcMd
+             HINTS ${SIMPATICO_ROOT}/src/mcMd
              )
 
 find_library(SIMPATICO_UTIL_LIB
              NAMES util
-             HINTS ${SIMPATICO_ROOT}/obj/serial/util
+             HINTS ${SIMPATICO_ROOT}/src/util
              )
 
 find_library(SIMPATICO_INTER_LIB
             NAMES inter
-            HINTS ${SIMPATICO_ROOT}/obj/serial/inter
+            HINTS ${SIMPATICO_ROOT}/src/inter
             )
 
 set(CMAKE_FIND_LIBRARY_PREFIXES ${_old_prefixes})
