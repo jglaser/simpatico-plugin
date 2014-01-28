@@ -44,16 +44,10 @@ class diagnostic(analyze._analyzer):
         for p in range(0,nparticles):
             nodes.append([[], False])
         
-        bdata_snapshot = hoomd.SnapshotBondData(len(system.bonds))
-
-        globals.system_definition.getBondData().takeSnapshot(bdata_snapshot)
-
-        for i in range(0,len(bdata_snapshot.bonds)):
-            bond = bdata_snapshot.bonds[i]
-            type = bdata_snapshot.type_id[i]
-
-            nodes[bond.x][0].append((bond.y, type));
-            nodes[bond.y][0].append((bond.x, type));
+        for bond in system.bonds:
+            btype =  globals.system_definition.getBondData().getTypeByName(bond.type)
+            nodes[bond.a][0].append((bond.b, btype));
+            nodes[bond.b][0].append((bond.a, btype));
 
         # find distinct connected components
         species = {};
@@ -115,7 +109,7 @@ class diagnostic(analyze._analyzer):
         parameters += "  outputPrefix " + str(self.out_dir) + "/\n"
         parameters += " }\n"
         parameters += " nAtomType "+ str(len(system.particles.types)) + "\n"
-        parameters += " nBondType "+ str(system.bonds.bdata.getNBondTypes()) + "\n"
+        parameters += " nBondType "+ str(system.bonds.bdata.getNTypes()) + "\n"
         parameters += " atomTypes "
         for cur_type in system.particles.types: 
             parameters += " " +  cur_type + " 1.0"; # mass 1.0
@@ -217,7 +211,7 @@ class diagnostic(analyze._analyzer):
                     raise RuntimeError('Error creating Simpatico parameter file');
                 bond_force = force
 
-        nbondtypes = globals.system_definition.getBondData().getNBondTypes();
+        nbondtypes = globals.system_definition.getBondData().getNTypes();
         bond_type_list = [];
         for i in range(0,nbondtypes):
             bond_type_list.append(globals.system_definition.getBondData().getNameByType(i));
