@@ -8,6 +8,9 @@ if (ENABLE_CUDA)
     list(APPEND PLUGIN_SRC ${_CUDA_GENERATED_FILES})
 endif (ENABLE_CUDA)
 
+# Need to define NO_IMPORT_ARRAY in every file but hoomd_module.cc
+set_source_files_properties(${_SRCS} _{_CUDA_SRCCS} PROPERTIES COMPILE_DEFINITIONS NO_IMPORT_ARRAY)
+
 # build the C++ python module
 set(LIB_TARGET "_${PROJECT_NAME}")
 add_library(${LIB_TARGET} ${PLUGIN_SRC} ${PYMODULE_BUILD})

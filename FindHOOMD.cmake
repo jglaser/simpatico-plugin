@@ -127,7 +127,6 @@ set(CMAKE_MODULE_PATH ${HOOMD_ROOT}/share/hoomd/CMake/cuda
                       ${HOOMD_ROOT}/share/hoomd/CMake/git
                       ${CMAKE_MODULE_PATH}
                       )
-
 # Find the python executable and libraries
 include (HOOMDPythonSetup)
 # Find the boost libraries and set them up
@@ -140,12 +139,12 @@ include (HOOMDCFlagsSetup)
 include (HOOMDOSSpecificSetup)
 # setup common libraries used by all targets in this project
 include (HOOMDCommonLibsSetup)
+# setup Numpy
+include (HOOMDNumpySetup)
 # setup macros
 include (HOOMDMacros)
 # setup MPI support
 include (HOOMDMPISetup)
-# setup Numpy
-include (HOOMDNumpySetup)
 
 set(HOOMD_LIBRARIES ${HOOMD_LIB} ${HOOMD_COMMON_LIBS})
 
