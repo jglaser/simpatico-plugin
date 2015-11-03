@@ -1,3 +1,4 @@
+#include <hoomd/hoomd_config.h>
 #include <hoomd/hoomd.h>
 
 
@@ -19,7 +20,7 @@ struct SimpaticoWorkItem
         { }
 
     SimpaticoWorkItem(const unsigned int _timestep,
-                      const SnapshotParticleData& _snapshot,
+                      const SnapshotParticleData<Scalar>& _snapshot,
                       const BoxDim& _box)
         : timestep(_timestep),
           snapshot(_snapshot),
@@ -27,7 +28,7 @@ struct SimpaticoWorkItem
         { }
 
     unsigned int timestep;
-    SnapshotParticleData snapshot;
+    SnapshotParticleData<Scalar> snapshot;
     BoxDim box;
     };
 

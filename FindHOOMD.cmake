@@ -124,7 +124,7 @@ include_directories(${HOOMD_INCLUDE_DIR}/hoomd)
 # run all of HOOMD's generic lib setup scripts
 set(CMAKE_MODULE_PATH ${HOOMD_ROOT}/share/hoomd/CMake/cuda
                       ${HOOMD_ROOT}/share/hoomd/CMake/hoomd
-                      ${HOOMD_ROOT}/share/hoomd/CMake/python
+                      ${HOOMD_ROOT}/share/hoomd/CMake/git
                       ${CMAKE_MODULE_PATH}
                       )
 
@@ -144,6 +144,8 @@ include (HOOMDCommonLibsSetup)
 include (HOOMDMacros)
 # setup MPI support
 include (HOOMDMPISetup)
+# setup Numpy
+include (HOOMDNumpySetup)
 
 set(HOOMD_LIBRARIES ${HOOMD_LIB} ${HOOMD_COMMON_LIBS})
 

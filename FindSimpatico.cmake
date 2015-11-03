@@ -56,17 +56,17 @@ set(_old_prefixes ${CMAKE_FIND_LIBRARY_PREFIXES})
 set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
 find_library(SIMPATICO_MAIN_LIB
              NAMES mcMd
-             HINTS ${SIMPATICO_ROOT}/src/mcMd
+             HINTS ${SIMPATICO_ROOT}/bld/serial/mcMd
              )
 
 find_library(SIMPATICO_UTIL_LIB
              NAMES util
-             HINTS ${SIMPATICO_ROOT}/src/util
+             HINTS ${SIMPATICO_ROOT}/bld/serial/util
              )
 
 find_library(SIMPATICO_INTER_LIB
             NAMES inter
-            HINTS ${SIMPATICO_ROOT}/src/inter
+            HINTS ${SIMPATICO_ROOT}/bld/serial/inter
             )
 
 set(CMAKE_FIND_LIBRARY_PREFIXES ${_old_prefixes})

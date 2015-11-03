@@ -8,6 +8,7 @@
 #include <sstream>
 
 using namespace boost::python;
+using namespace std;
 
 class SimpaticoWorkerThread
     {
@@ -54,7 +55,7 @@ class SimpaticoWorkerThread
                 // Add molecules to system
                 for (int iMol = 0; iMol < speciesCapacity; ++iMol)
                     {
-                    McMd::Molecule *molPtr = &(speciesPtr->reservoir().pop());
+                    McMd::Molecule *molPtr = &(simulation->getMolecule(iSpec));
                     simulation->system().addMolecule(*molPtr);
                     }
                 }
@@ -67,7 +68,7 @@ class SimpaticoWorkerThread
         void process_work_item(SimpaticoWorkItem &work_item)
             {
             unsigned int timestep = work_item.timestep;
-            SnapshotParticleData& snap = work_item.snapshot;
+            SnapshotParticleData<Scalar>& snap = work_item.snapshot;
             BoxDim &box = work_item.box;
            
             Scalar3 L = box.getL();
@@ -149,7 +150,7 @@ void Simpatico::analyze(unsigned int timestep)
     if (m_prof)
         m_prof->push("Simpatico");
 
-    SnapshotParticleData snap(m_pdata->getNGlobal());
+    SnapshotParticleData<Scalar> snap(m_pdata->getNGlobal());
     m_pdata->takeSnapshot(snap);
 
 #ifdef ENABLE_MPI
